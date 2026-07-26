@@ -1,11 +1,11 @@
 package vn.test.jpbbackend.controller;
 
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
+import org.springframework.web.bind.annotation.*;
 import vn.test.jpbbackend.entity.ProductOfferings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
 import vn.test.jpbbackend.service.ProductOfferingsService;
 
 import java.util.List;
@@ -32,9 +32,42 @@ public class ProductOfferingController {
         return ResponseEntity.ok(productOfferings);
     }
 
-    @GetMapping("/products")
-    public ResponseEntity<List<ProductOfferings>> getAllProducts() {
-        List<ProductOfferings> productOfferings = productOfferingsService.getAll();
+//    @PostMapping("/products-name")
+//    public ResponseEntity<List<ProductOfferings>> retrieveByName(@RequestParam @NonNull String name) {
+//        List<ProductOfferings> productOfferings = productOfferingsService.retrieveByName(name);
+//        return ResponseEntity.ok(productOfferings);
+//    }
+
+    @PostMapping("/products")
+    public ResponseEntity<List<ProductOfferings>> retrieveByNameAndPrice(@RequestParam @NonNull String name, @RequestParam @Nullable Long price) {
+        List<ProductOfferings> productOfferings = productOfferingsService.retrieveByNameAndPrice(name, price);
         return ResponseEntity.ok(productOfferings);
     }
+
+    @GetMapping("/get-name")
+    public ResponseEntity<List<ProductOfferings>> getByName (@NonNull String name) {
+        name = "Product 6001";
+
+        List<ProductOfferings> listProductOfferings =
+                productOfferingsService.getByName(name);
+
+        return ResponseEntity.ok(listProductOfferings);
+    }
+
+    @GetMapping("/get-name-and-price")
+    public ResponseEntity<List<ProductOfferings>> getByNameAndPrice (@NonNull String name, @NonNull Long price) {
+        name = "Product 6001";
+        price = 1000L;
+
+        List<ProductOfferings> listProductOfferings =
+                productOfferingsService.getByNameAndPrice(name, price);
+
+        return ResponseEntity.ok(listProductOfferings);
+    }
+
+//    @GetMapping("/products")
+//    public ResponseEntity<List<ProductOfferings>> getAllProducts() {
+//        List<ProductOfferings> productOfferings = productOfferingsService.getAll();
+//        return ResponseEntity.ok(productOfferings);
+//    }
 }
