@@ -1,19 +1,25 @@
 package vn.test.jpbbackend.entity;
 
-import jakarta.persistence.*;
+import java.io.Serializable;
+
+import org.hibernate.annotations.ColumnDefault;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-import org.hibernate.generator.internal.CurrentTimestampGeneration;
-import org.springframework.data.annotation.LastModifiedDate;
 
-import java.io.Serializable;
-import java.util.Date;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+
+import vn.test.jpbbackend.model.Status;
 
 @Entity
 @Table(name = "product_offerings", catalog = "products")
@@ -25,6 +31,7 @@ public class ProductOfferings implements Serializable {
     @Id
     @NonNull
     @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "name")
@@ -37,6 +44,10 @@ public class ProductOfferings implements Serializable {
     @Column(name = "color")
     @ColumnDefault("blue")
     private String color;
+
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private Status status;
 
 //    @Column(name = "created_at")
 //    @Temporal(TemporalType.TIMESTAMP)

@@ -1,32 +1,39 @@
 package vn.test.jpbbackend.controller;
 
-import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
-import org.springframework.web.bind.annotation.*;
-import vn.test.jpbbackend.entity.ProductOfferings;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import vn.test.jpbbackend.entity.ProductOfferings;
 import vn.test.jpbbackend.service.ProductOfferingsService;
 
-import java.util.List;
-import java.util.Random;
-
 @RestController
+@RequestMapping("/products")
 public class ProductOfferingController {
 
     @Autowired
     private ProductOfferingsService productOfferingsService;
 
-    @GetMapping("/product")
-    public ResponseEntity<ProductOfferings> getRandomProduct() {
-        Random random = new Random();
-        int rid = random.nextInt(6000, 6501);
-        Long id = Long.valueOf(rid);
-        ProductOfferings productOfferings = productOfferingsService.getById(id);
-        return ResponseEntity.ok(productOfferings);
-    }
+//    @GetMapping("/product")
+//    public ResponseEntity<ProductOfferings> getRandomProduct() {
+//        Random random = new Random();
+//        int rid = random.nextInt(6000, 6501);
+//        Long id = Long.valueOf(rid);
+//        ProductOfferings productOfferings = productOfferingsService.getById(id);
+//        return ResponseEntity.ok(productOfferings);
+//    }
 
-    @GetMapping("/product/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<ProductOfferings> getById(@PathVariable Long id) {
         ProductOfferings productOfferings = productOfferingsService.getById(id);
         return ResponseEntity.ok(productOfferings);
@@ -37,12 +44,6 @@ public class ProductOfferingController {
 //        List<ProductOfferings> productOfferings = productOfferingsService.retrieveByName(name);
 //        return ResponseEntity.ok(productOfferings);
 //    }
-
-    @PostMapping("/products")
-    public ResponseEntity<List<ProductOfferings>> retrieveByNameAndPrice(@RequestParam @NonNull String name, @RequestParam @Nullable Long price) {
-        List<ProductOfferings> productOfferings = productOfferingsService.retrieveByNameAndPrice(name, price);
-        return ResponseEntity.ok(productOfferings);
-    }
 
     @GetMapping("/get-name")
     public ResponseEntity<List<ProductOfferings>> getByName (@NonNull String name) {
@@ -70,4 +71,22 @@ public class ProductOfferingController {
 //        List<ProductOfferings> productOfferings = productOfferingsService.getAll();
 //        return ResponseEntity.ok(productOfferings);
 //    }
+
+    @PostMapping("")
+    public ResponseEntity<List<ProductOfferings>> retrieveByNameOrPrice(@RequestParam @NonNull String name, @RequestParam @Nullable Long price) {
+        List<ProductOfferings> productOfferings = productOfferingsService.retrieveByNameOrPrice(name, price);
+        return ResponseEntity.ok(productOfferings);
+    }
+
+    @PostMapping("add")
+    public ResponseEntity<ProductOfferings> create(@RequestBody ProductOfferings productOfferings) {
+        ProductOfferings createdProduct = productOfferingsService.createOneProduct(productOfferings);
+        return ResponseEntity.ok(createdProduct);
+    }
+
+    @PostMapping("update")
+    public ResponseEntity<ProductOfferings> update(@RequestBody @NonNull ProductOfferings requestProductOfferings) {
+        ProductOfferings updatedProduct = productOfferingsService.updateOneProduct(requestProductOfferings);
+        return ResponseEntity.ok(updatedProduct);
+    }
 }
