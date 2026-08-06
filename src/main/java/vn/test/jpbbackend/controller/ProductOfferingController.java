@@ -38,10 +38,10 @@ public class ProductOfferingController {
     @GetMapping("/{id}")
     public ResponseEntity<ProductOfferings> getById(@PathVariable Long id) {
         ProductOfferings productOfferings = productOfferingsService.getById(id);
-        Logger.getLogger()
+        Logger.getLogger("")
                 .info("Preparing product details with ID: " + id);
         ProductDetails productDetails = productOfferings.getProductDetails();
-        Logger.getLogger()
+        Logger.getLogger("")
                 .info("Retrieved product details with ID: " + productDetails.toString());
         return ResponseEntity.ok(productOfferings);
     }

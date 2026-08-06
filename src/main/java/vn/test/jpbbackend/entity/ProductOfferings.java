@@ -2,22 +2,14 @@ package vn.test.jpbbackend.entity;
 
 import java.io.Serializable;
 
+import jakarta.persistence.*;
 import org.hibernate.annotations.ColumnDefault;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
-
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 
 import vn.test.jpbbackend.model.Status;
 
@@ -48,6 +40,12 @@ public class ProductOfferings implements Serializable {
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private Status status;
+
+    // relationship with ProductDetail
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id", referencedColumnName = "id")
+//    @JsonIgnore
+    private ProductDetails productDetails;
 
 //    @Column(name = "created_at")
 //    @Temporal(TemporalType.TIMESTAMP)

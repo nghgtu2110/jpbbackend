@@ -119,7 +119,6 @@ public class ProductOfferingsServiceImpl implements ProductOfferingsService {
         currentProduct.setPrice(productOfferings.getPrice());
         currentProduct.setName(productOfferings.getName());
         currentProduct.setColor(productOfferings.getColor());
-        return currentProduct;
-        // return productOfferingsRepo.save(productOfferings);
+        return productOfferingsRepo.save(productOfferings);
     }
 }
