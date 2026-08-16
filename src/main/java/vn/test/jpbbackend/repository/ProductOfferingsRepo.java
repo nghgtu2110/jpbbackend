@@ -1,12 +1,26 @@
 package vn.test.jpbbackend.repository;
 
-import org.springframework.stereotype.Repository;
-import vn.test.jpbbackend.entity.ProductOfferings;
-import org.springframework.data.jpa.repository.JpaRepository;
-
 import java.util.List;
 
-@Repository
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import vn.test.jpbbackend.entity.ProductOfferings;
+
+
 public interface ProductOfferingsRepo extends JpaRepository<ProductOfferings, Long> {
-//    public List<ProductOfferings> findAllByName(String name);
+
+    @Query("SELECT po FROM ProductOfferings po WHERE po.name = :name")
+    public List<ProductOfferings> findAllByName(@Param("name") String name);
+
+    // nativeQuery = true
+    @Query("""
+        SELECT po
+        FROM ProductOfferings po
+        JOIN ProductOfferingDetails pod
+            ON po.id = pod.offeringsId
+        WHERE pod.detailsId = :detail_id
+    """)
+    public List<ProductOfferings> findByDetailId(@Param("detail_id") Integer detailId);
 }

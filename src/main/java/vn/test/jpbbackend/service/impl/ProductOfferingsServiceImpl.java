@@ -9,6 +9,7 @@ import org.springframework.data.domain.Example;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
+import vn.test.jpbbackend.dto.request.ProductOfferingCreateRequest;
 import vn.test.jpbbackend.entity.ProductOfferings;
 import vn.test.jpbbackend.repository.ProductOfferingsRepo;
 import vn.test.jpbbackend.service.ProductOfferingsService;
@@ -120,5 +121,51 @@ public class ProductOfferingsServiceImpl implements ProductOfferingsService {
         currentProduct.setName(productOfferings.getName());
         currentProduct.setColor(productOfferings.getColor());
         return productOfferingsRepo.save(productOfferings);
+    }
+
+    @Override
+    public List<ProductOfferings> findAllByName(String name) {
+        List<ProductOfferings> offeringsList = productOfferingsRepo.findAllByName(name);
+         if (offeringsList.isEmpty()) {
+             return Collections.emptyList();
+         }
+            return offeringsList;
+    }
+
+    @Override
+    public List<ProductOfferings> findByDetailId(Integer detailId) {
+        if (detailId == null || detailId <= 0) {
+            return Collections.emptyList();
+        }
+
+        List<ProductOfferings> offeringsList = productOfferingsRepo.findByDetailId(detailId);
+        if (offeringsList.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return productOfferingsRepo.findByDetailId(detailId);
+    }
+
+    @Override
+    public ProductOfferings createOne(ProductOfferingCreateRequest request) {
+        if (request.getName() == null || request.getName().trim().isEmpty()) {
+            throw new IllegalArgumentException("Name must not be null or empty");
+        }
+
+        if (request.getPrice() == null || request.getPrice() <= 0) {
+            throw new IllegalArgumentException("Price must be greater than 0");
+        }
+
+        if (request.getColor() == null || request.getColor().trim().isEmpty()) {
+            throw new IllegalArgumentException("Color must not be null or empty");
+        }
+
+        ProductOfferings product = new ProductOfferings();
+
+        product.setName(request.getName());
+        product.setPrice(request.getPrice());
+        product.setColor(request.getColor());
+
+        return productOfferingsRepo.save(product);
     }
 }

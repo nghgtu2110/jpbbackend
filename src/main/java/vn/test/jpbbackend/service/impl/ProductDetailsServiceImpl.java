@@ -1,13 +1,14 @@
 package vn.test.jpbbackend.service.impl;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import vn.test.jpbbackend.entity.ProductDetails;
 import vn.test.jpbbackend.repository.ProductDetailsRepo;
 import vn.test.jpbbackend.service.ProductDetailsService;
-
-import java.util.Collections;
-import java.util.List;
 
 @Service
 public class ProductDetailsServiceImpl implements ProductDetailsService {

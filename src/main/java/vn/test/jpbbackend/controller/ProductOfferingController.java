@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import vn.test.jpbbackend.dto.request.ProductOfferingCreateRequest;
 import vn.test.jpbbackend.entity.ProductDetails;
 import vn.test.jpbbackend.entity.ProductOfferings;
 import vn.test.jpbbackend.service.ProductOfferingsService;
@@ -95,5 +96,34 @@ public class ProductOfferingController {
     public ResponseEntity<ProductOfferings> update(@RequestBody @NonNull ProductOfferings requestProductOfferings) {
         ProductOfferings updatedProduct = productOfferingsService.updateOneProduct(requestProductOfferings);
         return ResponseEntity.ok(updatedProduct);
+    }
+
+    @GetMapping("/offerings/{name}")
+    public ResponseEntity<List<ProductOfferings>> findAllByName(@PathVariable String name) {
+        if (name == null || name.trim().isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        List<ProductOfferings> result = productOfferingsService.findAllByName(name);
+
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/offerings/detail/{detailId}")
+    public ResponseEntity<List<ProductOfferings>> findByDetailId(@PathVariable Integer detailId) {
+    if (detailId == null) {
+        return ResponseEntity.badRequest().build();
+    }
+
+    List<ProductOfferings> list = productOfferingsService.findByDetailId(detailId);
+
+    return ResponseEntity.ok(list);
+    }
+
+
+    @GetMapping("create")
+    public ResponseEntity<ProductOfferings> createOne(@RequestBody @NonNull ProductOfferingCreateRequest request) {
+        ProductOfferings createdProduct = productOfferingsService.createOne(request);
+        return ResponseEntity.ok(createdProduct);
     }
 }

@@ -42,7 +42,7 @@ public class ProductOfferings implements Serializable {
     private Status status;
 
     // relationship with ProductDetail
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne()
     @JoinColumn(name = "id", referencedColumnName = "id")
 //    @JsonIgnore
     private ProductDetails productDetails;
