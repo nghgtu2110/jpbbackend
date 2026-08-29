@@ -1,16 +1,31 @@
 package vn.test.jpbbackend.service.impl;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import vn.test.jpbbackend.dto.request.ProductOfferingCreateRequest;
+import vn.test.jpbbackend.dto.request.ProductOfferingDetailsRequest;
+import vn.test.jpbbackend.entity.ProductDetails;
+import vn.test.jpbbackend.entity.ProductOfferingDetails;
 import vn.test.jpbbackend.entity.ProductOfferings;
+import vn.test.jpbbackend.repository.ProductDetailsRepo;
+import vn.test.jpbbackend.repository.ProductOfferingDetailsRepo;
 import vn.test.jpbbackend.repository.ProductOfferingsRepo;
 import vn.test.jpbbackend.service.ProductOfferingsService;
 
@@ -19,6 +34,18 @@ public class ProductOfferingsServiceImpl implements ProductOfferingsService {
 
     @Autowired
     private ProductOfferingsRepo productOfferingsRepo;
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    @Autowired
+    private ProductOfferingsRepo offeringsRepo;
+
+    @Autowired
+    private ProductDetailsRepo detailsRepo;
+
+    @Autowired
+    private ProductOfferingDetailsRepo offeringDetailsRepo;
 
     @Override
     public ProductOfferings getById(@NonNull Long id) {
@@ -96,8 +123,12 @@ public class ProductOfferingsServiceImpl implements ProductOfferingsService {
 
     @Override
     public ProductOfferings createOneProduct(ProductOfferings productOfferings) {
-        ProductOfferings savedProduct = productOfferingsRepo.save(productOfferings);
-        return savedProduct;
+        if (productOfferings != null) {
+            ProductOfferings savedProduct = productOfferingsRepo.save(productOfferings);
+            return savedProduct;
+        }
+        
+        throw new RuntimeException("Product Offerings cannot be null");
     }
 
     @Override
@@ -126,10 +157,10 @@ public class ProductOfferingsServiceImpl implements ProductOfferingsService {
     @Override
     public List<ProductOfferings> findAllByName(String name) {
         List<ProductOfferings> offeringsList = productOfferingsRepo.findAllByName(name);
-         if (offeringsList.isEmpty()) {
-             return Collections.emptyList();
-         }
-            return offeringsList;
+        if (offeringsList.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return offeringsList;
     }
 
     @Override
@@ -167,5 +198,67 @@ public class ProductOfferingsServiceImpl implements ProductOfferingsService {
         product.setColor(request.getColor());
 
         return productOfferingsRepo.save(product);
+    }
+
+    @Override
+    public List<ProductOfferings> filterProductOfferings(String name, Long minPrice, Long maxPrice, String color, String status) {
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<ProductOfferings> query = builder.createQuery(ProductOfferings.class);
+        Root<ProductOfferings> root = query.from(ProductOfferings.class);
+
+        List<Predicate> predicates = new ArrayList<>();
+
+        if (name != null && !name.trim().isEmpty()) {
+            predicates.add(builder.like(root.get("name"), "%" + name + "%"));
+        }
+
+        if (minPrice != null) {
+            predicates.add(builder.greaterThanOrEqualTo(root.get("price"), minPrice));
+        }
+        if (maxPrice != null) {
+            predicates.add(builder.lessThanOrEqualTo(root.get("price"), maxPrice));
+        }
+
+        if (color != null && !color.trim().isEmpty()) {
+            predicates.add(builder.like(root.get("color"), "%" + color + "%"));
+        }
+
+        if (status != null && !status.trim().isEmpty()) {
+            predicates.add(builder.equal(root.get("status"), status));
+        }
+
+        query.where(predicates.toArray(new Predicate[0]));
+
+        return entityManager.createQuery(query).getResultList();
+    }
+
+    @Override
+    @Transactional 
+    public List<ProductOfferingDetails> saveOrUpdateDetails(ProductOfferingDetailsRequest request) {
+
+        ProductOfferings offering = offeringsRepo.findById(request.getProductOfferingId())
+                .orElseThrow(() -> new IllegalArgumentException("Not Found Product Offering in Database with ID: " + request.getProductOfferingId()));
+
+        Set<Long> uniqueDetailIds = new HashSet<>();
+        if (request.getProductDetailIds() != null) {
+            uniqueDetailIds.addAll(request.getProductDetailIds());
+        }
+
+        offeringDetailsRepo.deleteByProductOfferingsId(offering.getId());
+
+        List<ProductOfferingDetails> productOfferingDetailsList = new ArrayList<>();
+        for (Long detailId : uniqueDetailIds) {
+            ProductDetails detail = detailsRepo.findById(detailId)
+                    .orElseThrow(() -> new IllegalArgumentException("Not Found Product Detail in Database with ID: " + detailId));
+
+            ProductOfferingDetails productOfferingDetailsItem = ProductOfferingDetails.builder()
+                    .offerings(offering)
+                    .details(detail)
+                    .build();
+
+            productOfferingDetailsList.add(productOfferingDetailsItem);
+        }
+
+        return offeringDetailsRepo.saveAll(productOfferingDetailsList);
     }
 }

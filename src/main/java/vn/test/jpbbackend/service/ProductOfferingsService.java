@@ -6,6 +6,8 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import vn.test.jpbbackend.dto.request.ProductOfferingCreateRequest;
+import vn.test.jpbbackend.dto.request.ProductOfferingDetailsRequest;
+import vn.test.jpbbackend.entity.ProductOfferingDetails;
 import vn.test.jpbbackend.entity.ProductOfferings;
 
 @Service
@@ -29,4 +31,9 @@ public interface ProductOfferingsService  {
     List<ProductOfferings> findByDetailId(Integer detailId);
 
     ProductOfferings createOne(ProductOfferingCreateRequest request);
+
+    List<ProductOfferings> filterProductOfferings(String name, Long minPrice, Long maxPrice, String color, String status);
+
+    List<ProductOfferingDetails> saveOrUpdateDetails(ProductOfferingDetailsRequest request);
 }
+

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
@@ -17,11 +18,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import vn.test.jpbbackend.dto.request.ProductOfferingCreateRequest;
 import vn.test.jpbbackend.entity.ProductDetails;
+import vn.test.jpbbackend.entity.ProductOfferingDetails;
 import vn.test.jpbbackend.entity.ProductOfferings;
 import vn.test.jpbbackend.service.ProductOfferingsService;
 
 @RestController
-@RequestMapping("/products")
+@RequestMapping("/api/v1/product-offerings")
 public class ProductOfferingController {
 
     @Autowired
@@ -120,10 +122,11 @@ public class ProductOfferingController {
     return ResponseEntity.ok(list);
     }
 
-
     @GetMapping("create")
     public ResponseEntity<ProductOfferings> createOne(@RequestBody @NonNull ProductOfferingCreateRequest request) {
         ProductOfferings createdProduct = productOfferingsService.createOne(request);
         return ResponseEntity.ok(createdProduct);
     }
+
 }
+        

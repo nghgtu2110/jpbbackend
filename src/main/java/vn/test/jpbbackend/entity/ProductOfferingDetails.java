@@ -4,11 +4,15 @@ import java.io.Serializable;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -18,6 +22,7 @@ import lombok.Setter;
 @Table(name = "product_offering_details", catalog = "products")
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProductOfferingDetails implements Serializable {
@@ -30,19 +35,19 @@ public class ProductOfferingDetails implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "details_id")
-    private Integer detailsId;
+    // @Column(name = "details_id")
+    // private Integer detailsId;
 
-//     @ManyToOne()
-//     @JoinColumn(name = "id", columnDefinition = "details_id", table = "product_details")
-//     private ProductDetails details;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id", columnDefinition = "details_id", table = "product_details")
+    private ProductDetails details;
 
-    @Column(name = "offerings_id")
-    private Integer offeringsId;
+    // @Column(name = "offerings_id")
+    // private Integer offeringsId;
 
-//     @ManyToOne()
-//     @JoinColumn(name = "id", columnDefinition = "offerings_id", table = "product_offerings")
-//     private ProductOfferings offerings;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id", columnDefinition = "offerings_id", table = "product_offerings")
+    private ProductOfferings offerings;
 
     @Column(name = "description")
     private String description;
